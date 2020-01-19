@@ -136,43 +136,6 @@ steps:
     path: /drone/src/volumes/pgadmin4/web
   - name: docs-builder
     path: /drone/src/volumes/docs-builder
-    
-  # environment:
-  #   PYTHONPATH: /pgadmin4
-  # commands:
-  # #- cp -r /tool-builder /usr/local
-  # #- cp -r /app-builder/web /pgadmin4
-  # - cp -r /docs-builder/docs/en_US/_build/html/ /pgadmin4/docs
-  # - cp requirements.txt /pgadmin4/requirements.txt
-  # - apk add --no-cache --virtual build-deps build-base postgresql-dev libffi-dev linux-headers
-  # - apk add postfix postgresql-client postgresql-libs shadow libcap
-  # - pip install --upgrade pip
-  # - pip install --no-cache-dir -r requirements.txt
-  # - pip install --no-cache-dir gunicorn==19.9.0
-  # - apk del --no-cache build-deps
-  # - mv /usr/local/pgsql/pgsql-9.12/libpq.so.5.12 /usr/lib/
-  # - ln -sf /usr/lib/libpq.so.5.12 /usr/lib/libpq.so.5
-  # - cp pkg/docker/run_pgadmin.py /pgadmin4
-  # - cp pkg/docker/entrypoint.sh /entrypoint.sh
-  # - python -O -m compileall -x node_modules /pgadmin4
-  # - groupadd -g 5050 pgadmin
-  # - useradd -r -u 5050 -g pgadmin pgadmin && \
-  # - mkdir -p /var/lib/pgadmin && \
-  # - chown pgadmin:pgadmin /var/lib/pgadmin && \
-  # - mkdir -p /var/log/pgadmin && \
-  # - chown pgadmin:pgadmin /var/log/pgadmin && \
-  # - touch /pgadmin4/config_distro.py && \
-  # - chown pgadmin:pgadmin /pgadmin4/config_distro.py && \
-  # - setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/python3.7
-
-# - name: publish-pgadmin4
-#   image: registry.artificialcreature.com/drone-plugins/kaniko:latest
-#   settings:
-#     registry: registry.artificialcreature.com
-#     repo: postgres/pgadmin4
-#     tags: latest
-#     log: debug
-#     # dockerfile: Dockerfile
 
 volumes:
 - name: app-builder
@@ -181,5 +144,3 @@ volumes:
   temp: {}
 - name: tool-builder
   temp: {}
-- name: pgadmin4-builder
-  path: /pgadmin4

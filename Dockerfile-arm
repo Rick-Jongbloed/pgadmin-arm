@@ -30,8 +30,8 @@ RUN apk add --no-cache --virtual \
     apk del --no-cache build-deps
 
 # We need the v12 usrlibpq, which is only in the 'edge' build of Alpine at present
-COPY /volumes/usr/local/pgsql/libpq.so.5.12 /usr/lib/
-RUN ln -sf /usr/lib/libpq.so.5.12 /usr/lib/libpq.so.5
+COPY /usr/local/pgsql/pgsql-9.12/libpq.so.5.12 /usr/lib/
+RUN ln -sf /usr/lib/libpq.so.5.12 /usr/lib/libpq.so.5 && rm /usr/local/pgsql/pgsql-9.12/libpq.so.5.12
 
 # Copy the runner script
 COPY pkg/docker/run_pgadmin.py /pgadmin4
