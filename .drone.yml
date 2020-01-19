@@ -16,15 +16,6 @@ steps:
   - rm -rf pgadmin4
   - ls -la
 
-# - name: publish-pgadmin4
-#   image: registry.artificialcreature.com/drone-plugins/kaniko:latest
-#   settings:
-#     registry: registry.artificialcreature.com
-#     repo: postgres/pgadmin4
-#     tags: latest
-#     log: debug
-#     # dockerfile: Dockerfile
-
 - name: app-builder
   image: node:10-alpine
   volumes:
@@ -32,7 +23,7 @@ steps:
     path: /pgadmin4/web
   commands:
   - apk add --no-cache autoconf automake bash g++ libc6-compat libjpeg-turbo-dev libpng-dev make nasm git zlib-dev
-  - cp web /pgadmin4/web
+  - cp -r web /pgadmin4
   - rm -rf /pgadmin4/web/*.log /pgadmin4/web/config_*.py /pgadmin4/web/node_modules /pgadmin4/web/regression `find /pgadmin4/web -type d -name tests` `find /pgadmin4/web -type f -name .DS_Store`
   - cd /pgadmin4/web
   - npm install
@@ -166,6 +157,15 @@ steps:
   - touch /pgadmin4/config_distro.py && \
   - chown pgadmin:pgadmin /pgadmin4/config_distro.py && \
   - setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/python3.7
+
+# - name: publish-pgadmin4
+#   image: registry.artificialcreature.com/drone-plugins/kaniko:latest
+#   settings:
+#     registry: registry.artificialcreature.com
+#     repo: postgres/pgadmin4
+#     tags: latest
+#     log: debug
+#     # dockerfile: Dockerfile
 
 volumes:
 - name: app-builder
