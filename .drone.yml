@@ -22,7 +22,7 @@ steps:
   - name: app-builder
     path: /pgadmin4/web
   commands:
-  - apk add --no-cache autoconf automake bash g++ libc6-compat libjpeg-turbo-dev libpng-dev make nasm git zlib-dev
+  - apk add --no-cache autoconf automake bash g++ libc6-compat libjpeg-turbo-dev libpng-dev make nasm git zlib-dev libtool
   - cp -r web /pgadmin4/
   - rm -rf /pgadmin4/web/*.log /pgadmin4/web/config_*.py /pgadmin4/web/node_modules /pgadmin4/web/regression `find /pgadmin4/web -type d -name tests` `find /pgadmin4/web -type f -name .DS_Store`
   - cd /pgadmin4/web
@@ -120,14 +120,15 @@ steps:
 - name: pgadmin4-builder
   image: python:3.7-alpine3.10
   volumes:
+  - name: pgadmin4-builder
+    path: /pgadmin4
   - name: tool-builder
     path: /usr/local/pgsql
   - name: app-builder
     path: /pgadmin4/web
   - name: docs-builder
     path: /docs-builder
-  - name: pgadmin4-builder
-    path: /pgadmin4
+
   - name: libpq-library
     path: /libpq-library
   environment:
