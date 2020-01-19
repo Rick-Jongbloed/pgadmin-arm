@@ -12,7 +12,7 @@ steps:
   # volumes:
   # - name: pgadmin4-src
   #   path: /pgadmin4
-  # commands:
+  commands:
   - git clone https://github.com/postgres/pgadmin4 
   - cp -r pgadmin4/* .
   - ls -la
@@ -170,14 +170,14 @@ steps:
 #   - chown pgadmin:pgadmin /pgadmin4/config_distro.py && \
 #   - setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/python3.7
 
-volumes:
-# - name: app-builder
-#   temp: {}
-# - name: docs-builder
-#   temp: {}
-# - name: tool-builder
-#   temp: {}
-# - name: libpq-library
-#   temp: {}
-  - name: pgadmin4-src
-    temp: {}
+# volumes:
+# # - name: app-builder
+# #   temp: {}
+# # - name: docs-builder
+# #   temp: {}
+# # - name: tool-builder
+# #   temp: {}
+# # - name: libpq-library
+# #   temp: {}
+#   - name: pgadmin4-src
+#     temp: {}
