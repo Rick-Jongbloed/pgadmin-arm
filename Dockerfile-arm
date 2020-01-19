@@ -1,6 +1,6 @@
 FROM arm32v7/python:3.7-alpine3.10
 
-COPY --from=tool-builder /usr/local/pgsql /usr/local/
+COPY  /volumes/usr/local/pgsql /usr/local/
 
 WORKDIR /pgadmin4
 ENV PYTHONPATH=/pgadmin4
