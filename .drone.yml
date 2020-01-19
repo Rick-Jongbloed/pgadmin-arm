@@ -25,8 +25,8 @@ steps:
     registry: registry.artificialcreature.com
     repo: postgres/pgadmin4
     tags: latest
-    log: info
-    dockerfile: ./pgadmin4/Dockerfile
+    log: debug
+    # dockerfile: Dockerfile
 
 # - name: app-builder
 #   image: node:10-alpine
