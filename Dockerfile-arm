@@ -29,8 +29,8 @@ RUN apk add --no-cache --virtual \
     pip install --no-cache-dir gunicorn==19.9.0 && \
     apk del --no-cache build-deps
 
-# We need the v12 libpq, which is only in the 'edge' build of Alpine at present
-COPY /volumes/usr/local/lib/libpq.so.5.12 /usr/lib/
+# We need the v12 usrlibpq, which is only in the 'edge' build of Alpine at present
+COPY /volumes/usr/local/pgsql/libpq.so.5.12 /usr/lib/
 RUN ln -sf /usr/lib/libpq.so.5.12 /usr/lib/libpq.so.5
 
 # Copy the runner script
