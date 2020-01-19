@@ -23,7 +23,7 @@ steps:
     path: /pgadmin4/web
   commands:
   - apk add --no-cache autoconf automake bash g++ libc6-compat libjpeg-turbo-dev libpng-dev make nasm git zlib-dev
-  - cp -r web /pgadmin4
+  - cp -r web /pgadmin4/
   - rm -rf /pgadmin4/web/*.log /pgadmin4/web/config_*.py /pgadmin4/web/node_modules /pgadmin4/web/regression `find /pgadmin4/web -type d -name tests` `find /pgadmin4/web -type f -name .DS_Store`
   - cd /pgadmin4/web
   - npm install
@@ -43,8 +43,8 @@ steps:
   commands:
   - apk add --no-cache make build-base openssl-dev libffi-dev
   - pip install --no-cache-dir sphinx flask_security flask_paranoid python-dateutil flask_sqlalchemy flask_gravatar flask_migrate simplejson cryptography
-  - cp -r docs /pgadmin4/docs
-  - cp -r web /pgadmin4/web
+  - cp -r docs /pgadmin4/
+  - cp -r web /pgadmin4/
   - rm -rf /pgadmin4/docs/en_US/_build
   - LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 make -C /pgadmin4/docs/en_US -f Makefile.sphinx html
 
@@ -136,7 +136,7 @@ steps:
   #- cp -r /tool-builder /usr/local
   #- cp -r /app-builder/web /pgadmin4
   - cp -r /docs-builder/docs/en_US/_build/html/ /pgadmin4/docs
-  - cp requirements.txtx /pgadmin4/requirements.txt
+  - cp requirements.txt /pgadmin4/requirements.txt
   - apk add --no-cache --virtual build-deps build-base postgresql-dev libffi-dev linux-headers
   - apk add postfix postgresql-client postgresql-libs shadow libcap
   - pip install --upgrade pip
