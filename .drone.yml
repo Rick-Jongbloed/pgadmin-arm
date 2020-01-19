@@ -1,0 +1,166 @@
+kind: pipeline
+type: kubernetes
+name: pgadmin4-arm
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: clone-pgadmin
+  image: drone/git
+  commands:
+  - git clone https://github.com/postgres/pgadmin4
+
+- name: app-builder
+  image: node:10-alpine
+  volumes:
+  - name: app-builder
+    path: /pgadmin4/web
+  commands:
+  - apk add --no-cache autoconf automake bash g++ libc6-compat libjpeg-turbo-dev libpng-dev make nasm git zlib-dev
+  - cp -r web /pgadmin4/web
+  - rm -rf /pgadmin4/web/*.log /pgadmin4/web/config_*.py /pgadmin4/web/node_modules /pgadmin4/web/regression `find /pgadmin4/web -type d -name tests` `find /pgadmin4/web -type f -name .DS_Store`
+  - cd /pgadmin4/web
+  - npm install
+	- npm audit fix
+	- rm -f yarn.lock
+	- yarn import
+	- yarn audit
+	- rm -f package-lock.json
+  - yarn run bundle
+  - rm -rf node_modules yarn.lock package.json .[^.]* babel.cfg webpack.* karma.conf.js ./pgadmin/static/js/generated/.cache
+
+- name: docs-builder
+  image: python:3.7-alpine3.10
+  volumes:
+  - name: docs-builder
+    path: /pgadmin4
+  commands:
+  - apk add --no-cache make build-base openssl-dev libffi-dev
+  - pip install --no-cache-dir sphinx flask_security flask_paranoid python-dateutil flask_sqlalchemy flask_gravatar flask_migrate simplejson cryptography
+  - cp -r docs /pgadmin4/docs
+  - cp -r web /pgadmin4/web
+  - rm -rf /pgadmin4/docs/en_US/_build
+  - LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 make -C /pgadmin4/docs/en_US -f Makefile.sphinx html
+
+- name: pg94-builder
+  image: postgres:9.4-alpine
+  volumes:
+  - name: tool-builder
+    path: /usr/local/psql
+  commands:
+  - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.4/
+  - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.4/
+  - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.4/
+  - cp /usr/local/bin/psql /usr/local/pgsql/pgsql-9.4/
+
+- name: pg95-builder
+  image: postgres:9.5-alpine
+  volumes:
+  - name: tool-builder
+    path: /usr/local/psql
+  commands:
+  - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.5/
+  - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.5/
+  - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.5/
+  - cp /usr/local/bin/psql /usr/local/pgsql/pgsql-9.5/
+
+- name: pg96-builder
+  image: postgres:9.6-alpine
+  volumes:
+  - name: tool-builder
+    path: /usr/local/psql
+  commands:
+  - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.6/
+  - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.6/
+  - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.6/
+  - cp /usr/local/bin/psql /usr/local/pgsql/pgsql-9.6/
+
+- name: pg10-builder
+  image: postgres:10-alpine
+  volumes:
+  - name: tool-builder
+    path: /usr/local/pgsql
+  commands:
+  - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.10/
+  - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.10/
+  - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.10/
+  - cp /usr/local/bin/psql /usr/local/pgsql/pgsql-9.10/
+
+- name: pg11-builder
+  image: postgres:11-alpine
+  volumes:
+  - name: tool-builder
+    path: /usr/local/pgsql
+  commands:
+  - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.11/
+  - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.11/
+  - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.11/
+  - cp /usr/local/bin/psql /usr/local/pgsql/pgsql-9.11/
+
+- name: pg12-builder
+  image: postgres:12-alpine
+  volumes:
+  - name: tool-builder
+    path: /usr/local/pgsql
+  - name: libpq-library
+    path: /libpq-library
+  commands:
+  - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.12/
+  - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.12/
+  - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.12/
+  - cp /usr/local/bin/psql /usr/local/pgsql/pgsql-9.12/
+  - cp /usr/local/lib/libpq.so.5.12 /libpq-library/
+
+- name: pgadmin4-builder
+  image: python:3.7-alpine3.10
+  volumes:
+  - name: tool-builder
+    path: /usr/local/pgsql
+  - name: app-builder
+    path: /pgadmin4/web
+  - name: docs-builder
+    path: /docs-builder
+  - name: pgadmin4-builder
+    path: /pgadmin4
+  - name: libpq-library
+    path: /libpq-library
+  environment:
+    PYTHONPATH: /pgadmin4
+  commands:
+  #- cp -r /tool-builder /usr/local
+  #- cp -r /app-builder/web /pgadmin4
+  - cp -r /docs-builder/docs/en_US/_build/html/ /pgadmin4/docs
+  - cp requirements.txtx /pgadmin4/requirements.txt
+  - apk add --no-cache --virtual build-deps build-base postgresql-dev libffi-dev linux-headers
+  - apk add postfix postgresql-client postgresql-libs shadow libcap
+  - pip install --upgrade pip
+  - pip install --no-cache-dir -r requirements.txt
+  - pip install --no-cache-dir gunicorn==19.9.0
+  - apk del --no-cache build-deps
+  - cp /libpq-library/libpq.so.5.12 /usr/lib/
+  - ln -sf /usr/lib/libpq.so.5.12 /usr/lib/libpq.so.5
+  - cp pkg/docker/run_pgadmin.py /pgadmin4
+  - cp pkg/docker/entrypoint.sh /entrypoint.sh
+  - python -O -m compileall -x node_modules /pgadmin4
+  - groupadd -g 5050 pgadmin
+  - useradd -r -u 5050 -g pgadmin pgadmin && \
+  - mkdir -p /var/lib/pgadmin && \
+  - chown pgadmin:pgadmin /var/lib/pgadmin && \
+  - mkdir -p /var/log/pgadmin && \
+  - chown pgadmin:pgadmin /var/log/pgadmin && \
+  - touch /pgadmin4/config_distro.py && \
+  - chown pgadmin:pgadmin /pgadmin4/config_distro.py && \
+  - setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/python3.7
+  
+volumes:
+- name: app-builder
+  temp: {}
+- name: docs-builder
+  temp: {}
+- name: tool-builder
+  temp: {}
+- name: libpq-library
+  temp: {}
+  
