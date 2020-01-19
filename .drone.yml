@@ -23,11 +23,11 @@ steps:
   - rm -rf /pgadmin4/web/*.log /pgadmin4/web/config_*.py /pgadmin4/web/node_modules /pgadmin4/web/regression `find /pgadmin4/web -type d -name tests` `find /pgadmin4/web -type f -name .DS_Store`
   - cd /pgadmin4/web
   - npm install
-	- npm audit fix
-	- rm -f yarn.lock
-	- yarn import
-	- yarn audit
-	- rm -f package-lock.json
+  - npm audit fix
+  - rm -f yarn.lock
+  - yarn import
+  - yarn audit
+  - rm -f package-lock.json
   - yarn run bundle
   - rm -rf node_modules yarn.lock package.json .[^.]* babel.cfg webpack.* karma.conf.js ./pgadmin/static/js/generated/.cache
 
@@ -153,7 +153,7 @@ steps:
   - touch /pgadmin4/config_distro.py && \
   - chown pgadmin:pgadmin /pgadmin4/config_distro.py && \
   - setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/python3.7
-  
+
 volumes:
 - name: app-builder
   temp: {}
@@ -163,4 +163,3 @@ volumes:
   temp: {}
 - name: libpq-library
   temp: {}
-  
