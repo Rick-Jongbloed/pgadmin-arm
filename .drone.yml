@@ -9,10 +9,10 @@ platform:
 steps:
 - name: clone-pgadmin
   image: drone/git
-  volumes:
-  - name: pgadmin4-src
-    path: /pgadmin4
-  commands:
+  # volumes:
+  # - name: pgadmin4-src
+  #   path: /pgadmin4
+  # commands:
   - git clone https://github.com/postgres/pgadmin4 
   - cp -r pgadmin4/* .
   - ls -la
