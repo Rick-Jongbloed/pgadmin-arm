@@ -32,7 +32,7 @@ steps:
     path: /pgadmin4/web
   commands:
   - apk add --no-cache autoconf automake bash g++ libc6-compat libjpeg-turbo-dev libpng-dev make nasm git zlib-dev
-  - cp -r web /pgadmin4/web
+  - cp web /pgadmin4/web
   - rm -rf /pgadmin4/web/*.log /pgadmin4/web/config_*.py /pgadmin4/web/node_modules /pgadmin4/web/regression `find /pgadmin4/web -type d -name tests` `find /pgadmin4/web -type f -name .DS_Store`
   - cd /pgadmin4/web
   - npm install
