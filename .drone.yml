@@ -54,6 +54,7 @@ steps:
   - name: tool-builder
     path: /usr/local/psql
   commands:
+  - mkdir -p /usr/local/pgsql/pgsql-9.4/
   - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.4/
   - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.4/
   - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.4/
@@ -65,6 +66,7 @@ steps:
   - name: tool-builder
     path: /usr/local/psql
   commands:
+  - mkdir -p /usr/local/pgsql/pgsql-9.5/
   - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.5/
   - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.5/
   - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.5/
@@ -76,6 +78,7 @@ steps:
   - name: tool-builder
     path: /usr/local/psql
   commands:
+  - mkdir -p /usr/local/pgsql/pgsql-9.6/
   - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.6/
   - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.6/
   - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.6/
@@ -87,6 +90,7 @@ steps:
   - name: tool-builder
     path: /usr/local/pgsql
   commands:
+  - mkdir -p /usr/local/pgsql/pgsql-9.10/  
   - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.10/
   - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.10/
   - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.10/
@@ -98,6 +102,7 @@ steps:
   - name: tool-builder
     path: /usr/local/pgsql
   commands:
+  - mkdir -p /usr/local/pgsql/pgsql-9.11/  
   - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.11/
   - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.11/
   - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.11/
@@ -108,14 +113,13 @@ steps:
   volumes:
   - name: tool-builder
     path: /usr/local/pgsql
-  - name: libpq-library
-    path: /libpq-library
   commands:
+  - mkdir -p /usr/local/pgsql/pgsql-9.12/  
   - cp /usr/local/bin/pg_dump /usr/local/pgsql/pgsql-9.12/
   - cp /usr/local/bin/pg_dumpall /usr/local/pgsql/pgsql-9.12/
   - cp /usr/local/bin/pg_restore /usr/local/pgsql/pgsql-9.12/
   - cp /usr/local/bin/psql /usr/local/pgsql/pgsql-9.12/
-  - cp /usr/local/lib/libpq.so.5.12 /libpq-library/
+  - cp /usr/local/lib/libpq.so.5.12 /usr/local/pgsql/pgsql-9.12/
 
 - name: pgadmin4-builder
   image: python:3.7-alpine3.10
@@ -128,9 +132,6 @@ steps:
     path: /pgadmin4/web
   - name: docs-builder
     path: /docs-builder
-
-  - name: libpq-library
-    path: /libpq-library
   environment:
     PYTHONPATH: /pgadmin4
   commands:
@@ -144,7 +145,7 @@ steps:
   - pip install --no-cache-dir -r requirements.txt
   - pip install --no-cache-dir gunicorn==19.9.0
   - apk del --no-cache build-deps
-  - cp /libpq-library/libpq.so.5.12 /usr/lib/
+  - mv /usr/local/pgsql/pgsql-9.12/libpq.so.5.12 /usr/lib/
   - ln -sf /usr/lib/libpq.so.5.12 /usr/lib/libpq.so.5
   - cp pkg/docker/run_pgadmin.py /pgadmin4
   - cp pkg/docker/entrypoint.sh /entrypoint.sh
