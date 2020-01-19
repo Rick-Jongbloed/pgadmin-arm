@@ -9,18 +9,24 @@ platform:
 steps:
 - name: clone-pgadmin
   image: drone/git
+  volumes:
+  - name: pgadmin4-src
+    path: /pgadmin4
   commands:
-  - git clone https://github.com/postgres/pgadmin4
+  - git clone https://github.com/postgres/pgadmin4 
+  - cp -r pgadmin4/* .
+  - ls -la
+  - rm -rf pgadmin4
   - ls -la
 
 - name: publish-pgadmin4
   image: registry.artificialcreature.com/drone-plugins/kaniko:latest
   settings:
     registry: registry.artificialcreature.com
-    repo: postgresql/pgadmin4
+    repo: postgres/pgadmin4
     tags: latest
     log: info
-    dockerfile: Dockerfile
+    dockerfile: ./pgadmin4/Dockerfile
 
 # - name: app-builder
 #   image: node:10-alpine
@@ -164,7 +170,7 @@ steps:
 #   - chown pgadmin:pgadmin /pgadmin4/config_distro.py && \
 #   - setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/python3.7
 
-# volumes:
+volumes:
 # - name: app-builder
 #   temp: {}
 # - name: docs-builder
@@ -173,3 +179,5 @@ steps:
 #   temp: {}
 # - name: libpq-library
 #   temp: {}
+  - name: pgadmin4-src
+    temp: {}
